@@ -1,0 +1,26 @@
+{
+  "name": "foundation-tech",
+  "version": "1.0.0",
+  "description": "New Tech-stack implementations!",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/jlozano9305/foundation-tech.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/jlozano9305/foundation-tech/issues"
+  },
+  "homepage": "https://gitlab.com/jlozano9305/foundation-tech#README",
+  "dependencies": {
+    "async": "2.1.4",
+    "hapi": "16.1.0",
+    "inert": "4.1.0",
+    "nodemon": "1.11.0"
+  }
+}
