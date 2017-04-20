@@ -1,4 +1,9 @@
 'use strict';
+var opbeat = require('opbeat').start({
+  appId: '5ecfcdffbe',
+  organizationId: '5f3fe181c08c46f1b53471cfe28c3e2c',
+  secretToken: 'b5566f02ec0c4584dacec68310072acf98061cd8'
+})
 
 const Hapi = require('hapi');
 var team = require('./src/models/team');
@@ -29,6 +34,20 @@ server.route({
         console.log('request.params', request.params);
         console.log('request.payload', request.payload);
         console.log('request.query', request.query);
+		
+        var trace = opbeat.buildTrace();
+
+        if (trace) trace.start('TestCache', 'cache');
+
+        var myArray = [10, 1000, 10000, 100000 ]; 
+        var rand = myArray[Math.floor(Math.random() * myArray.length)];    
+
+		for(var i = 0; i < rand ; i++){
+        (function(){
+          console.log(i);           
+          })();
+        };
+		console.log('Ramdon Number:' + rand);       
 
         team.getAll(function (err, result) {
             if (err) {
@@ -38,6 +57,7 @@ server.route({
             }
         });
 
+        if (trace) trace.end();
     }
 });
 
