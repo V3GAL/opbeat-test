@@ -221,9 +221,12 @@ trans.end()
 	https://opbeat.com/docs/articles/introduction-to-performance-for-nodejs/	
 	https://opbeat.com/docs/articles/custom-traces-in-nodejs/
 	https://opbeat.com/docs/articles/get-started-with-release-tracking/
-
-	
 	
 	http://api.openweathermap.org/data/2.5/weather?id=3687238&APPID=cc6bfa527998abd39564fb6dc3059449&lang=es&units=metric
+	
+	
+	https://bintray.com/artifact/download/vszakats/generic/curl-7.54.0-win64-mingw.7z
+	curl https://intake.opbeat.com/api/v1/organizations/5f3fe181c08c46f1b53471cfe28c3e2c/apps/5ecfcdffbe/releases/ -H "Authorization: Bearer b5566f02ec0c4584dacec68310072acf98061cd8" -d rev=29477524617a296b538633e71bdb0edbc7333a08 -d branch=adding_opbeat -d status=completed
+	
 	
 */
