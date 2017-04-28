@@ -1,8 +1,17 @@
 'use strict';
+/*
+var opbeat = require('opbeat').start({ 
+  appId: '5ecfcdffbe',
+  organizationId: '5f3fe181c08c46f1b53471cfe28c3e2c',
+  secretToken: 'b5566f02ec0c4584dacec68310072acf98061cd8'
+})
+*/
+var opbeat = require('opbeat').start();
 
 const Hapi = require('hapi');
 var team = require('./src/models/team');
 var async = require('async');
+
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -29,15 +38,52 @@ server.route({
         console.log('request.params', request.params);
         console.log('request.payload', request.payload);
         console.log('request.query', request.query);
+		
+        var trace1 = opbeat.buildTrace();
+		var trace2 = opbeat.buildTrace();
+		var trace3 = opbeat.buildTrace();
+		
+		//Simulación de consulta externa
+        if (trace1) trace1.start('get_teams_cache', 'ext');
+		
+        var myArray = [10, 1000, 10000 ]; 
+        var rand = myArray[Math.floor(Math.random() * myArray.length)];    
 
-        team.getAll(function (err, result) {
+		for(var i = 0; i < rand ; i++){
+        (function(){
+          console.log(i);           
+          })();
+        };
+		console.log('Ramdon Number:' + rand);             
+						
+        if (trace1) trace1.end();
+		
+		//Simulación de llamada a base de datos
+		if (trace2) trace2.start('get_teams_db', 'db');
+	
+        var myArray = [10, 1000, 10000 ];  
+        var rand = myArray[Math.floor(Math.random() * myArray.length)];    
+
+		for(var i = 0; i < rand ; i++){
+        (function(){
+          console.log(i);           
+          })();
+        };
+		console.log('Ramdon Number:' + rand);             
+								
+        if (trace2) trace2.end();
+		
+		
+		//TRAZA DE APP
+		if (trace3) trace3.start('get_teams_app', 'app');
+		team.getAll(function (err, result) {
             if (err) {
                 return reply(err).code(404);
             } else {
                 return reply(result).code(200);
             }
-        });
-
+        });	
+		if (trace3) trace3.end();
     }
 });
 
@@ -132,3 +178,55 @@ server.start((err) => {
     }
     console.info('NODE_ENV', process.env.NODE_ENV, 'Server running at:', server.info.uri);
 });
+
+/*
+
+INSTALL
+npm install opbeat --save
+
+INICIALIZAR
+var opbeat = require('opbeat').start({
+  appId: '<app id>',
+  organizationId: '<org id>',
+  secretToken: '<token>'
+})
+
+INICIALIZAR CON VARIABLES DE ENTORNO
+
+setx OPBEAT_APP_ID "5ecfcdffbe"
+setx OPBEAT_ORGANIZATION_ID "5f3fe181c08c46f1b53471cfe28c3e2c"
+setx OPBEAT_SECRET_TOKEN "b5566f02ec0c4584dacec68310072acf98061cd8"
+
+var opbeat = require('opbeat').start()
+
+
+TRAZAS 
+
+var trace = opbeat.buildTrace();     
+if (trace) trace.start('name', 'type'); --type app,db,cache,template,ext
+
+.......SOME CODE.....
+
+if (trace) trace.end();
+	
+TRANSACCIONES (Agrupan grupos de trazas, se emplean cuando la app no es https)	
+var trans = opbeat.startTransaction(name, type)
+.......SOME CODE.....
+trans.result = err ? 500 : 200
+trans.end()
+	
+
+	
+	https://opbeat.com/docs/articles/get-started-with-hapi/#performance-monitoring
+	https://opbeat.com/docs/articles/introduction-to-performance-for-nodejs/	
+	https://opbeat.com/docs/articles/custom-traces-in-nodejs/
+	https://opbeat.com/docs/articles/get-started-with-release-tracking/
+	
+	http://api.openweathermap.org/data/2.5/weather?id=3687238&APPID=cc6bfa527998abd39564fb6dc3059449&lang=es&units=metric
+	
+	
+	https://bintray.com/artifact/download/vszakats/generic/curl-7.54.0-win64-mingw.7z
+	curl https://intake.opbeat.com/api/v1/organizations/5f3fe181c08c46f1b53471cfe28c3e2c/apps/5ecfcdffbe/releases/ -H "Authorization: Bearer b5566f02ec0c4584dacec68310072acf98061cd8" -d rev=29477524617a296b538633e71bdb0edbc7333a08 -d branch=adding_opbeat -d status=completed
+	
+	
+*/
